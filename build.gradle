@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+}
+
+group 'com.mysql'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    maven { url "http://repo.maven.apache.org/maven2" }
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // spring boot
+
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.6.RELEASE') {
+        exclude(module: 'commons-logging')
+    }
+
+    // apache
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+
+    // ali
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.51'
+
+
+    compile group: 'javax.servlet', name: 'servlet-api', version: '3.0-alpha-1'
+
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.16'
+
+    // dom4j
+    compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.11.1'
+
+    // https://mvnrepository.com/artifact/org.jdom/jdom
+    compile group: 'org.jdom', name: 'jdom', version: '1.1.3'
+
+
+}
