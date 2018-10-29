@@ -1,9 +1,9 @@
 package wechat.resp;
 
+import wechat.util.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.shifenkafei.sflc.wechat.util.Constants;
 
 /**
  * @author: TangXu

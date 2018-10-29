@@ -4,6 +4,7 @@ import com.shifenkafei.sflc.business.service.OrderService;
 import com.shifenkafei.sflc.wechat.service.PayServiceImpl;
 import org.jdom.JDOMException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,18 +17,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.shifenkafei.sflc.util.LogUtil.CONTROLLERLOG;
-
 /**
- * 微信接口
- *
- * @author TungShine 2016年9月20日
+ * @author: TangXu
+ * @date: 2018/10/29 20:25
+ * @description: 微信接口
  */
 @Controller
-@RequestMapping(value = "pay")
 public class PayController {
 
-    protected static Logger logger = CONTROLLERLOG;
+    static final Logger logger = LoggerFactory.getLogger(PayController.class);
 
     @Resource
     private PayServiceImpl payService;
