@@ -1,41 +1,21 @@
 package wechat.util;
 
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.SortedMap;
-
-import javax.servlet.http.HttpServletRequest;
-
+import encryption.MD5;
 import org.dom4j.io.SAXReader;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
-
-import com.shifenkafei.sflc.util.DateUtils;
-import com.shifenkafei.sflc.util.MD5;
-import com.shifenkafei.sflc.wechat.PayInfo;
 import org.slf4j.LoggerFactory;
 import tool.DateUtils;
 import wechat.PayInfo;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public class CommonUtil {
 
@@ -49,16 +29,6 @@ public class CommonUtil {
      * @throws Exception
      */
     public static String getSignature(PayInfo p) {
-
-        // String sign = "appid=" + p.getAppid() + "&attch=" + p.getAttch() +
-        // "&body=" + p.getBody() + "&device_info="
-        // + p.getDevice_info() + "&mch_id=" + p.getMch_id() + "&nonce_str=" +
-        // p.getNonce_str() + "&notify_url="
-        // + p.getNotify_url() + "&openid=" + p.getOpenid() + "&out_trade_no=" +
-        // p.getOut_trade_no()
-        // + "&spbill_create_ip=" + p.getSpbill_create_ip() + "&total_fee=" +
-        // p.getTotal_fee() + "&trade_type="
-        // + p.getTrade_type();
 
         StringBuilder sb = new StringBuilder();
         sb.append("appid=" + p.getAppid());
@@ -74,7 +44,7 @@ public class CommonUtil {
         sb.append("&total_fee=" + p.getTotal_fee());
         sb.append("&trade_type=" + p.getTrade_type());
         String signTemp = sb.toString() + "&key=" + Constants.api_key;
-        return MD5.GetMD5Code(signTemp);
+        return MD5.md5(signTemp);
 
     }
 
@@ -95,7 +65,7 @@ public class CommonUtil {
         sb.append("&total_fee=" + (int) signMap.get("total_fee"));
         sb.append("&trade_type=" + signMap.get("trade_type"));
         String signTemp = sb.toString() + "&key=" + Constants.api_key;
-        return MD5.GetMD5Code(signTemp);
+        return MD5.md5(signTemp);
     }
 
     /**
@@ -129,7 +99,7 @@ public class CommonUtil {
      * @return
      */
     public static String create_nonce_str(int digit) {
-        String base = "abcdefghijklmnopqrstuvwxyz0123456789";
+        String base = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random random = new Random();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < digit; i++) {

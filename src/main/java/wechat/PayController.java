@@ -1,8 +1,5 @@
 package wechat;
 
-import com.shifenkafei.sflc.business.service.OrderService;
-import com.shifenkafei.sflc.wechat.service.PayServiceImpl;
-import org.jdom.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -10,10 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,12 +21,6 @@ import java.util.Map;
 public class PayController {
 
     static final Logger logger = LoggerFactory.getLogger(PayController.class);
-
-    @Resource
-    private PayServiceImpl payService;
-
-    @Resource
-    private OrderService orderService;
 
     @RequestMapping(value = "index")
     public String index() {
@@ -53,8 +42,8 @@ public class PayController {
         try {
             logger.info("code is : ------" + code);
             logger.info("state is : ------" + state);
-            String weChatUserInfo = payService.getAccessToken(code, state, req);
-            req.getSession().setAttribute("weChatUserInfo", weChatUserInfo);
+//            String weChatUserInfo = payService.getAccessToken(code, state, req);
+//            req.getSession().setAttribute("weChatUserInfo", weChatUserInfo);
             return "weChatInfo";
         } catch (Exception e) {
             logger.error(e.toString());
@@ -71,17 +60,17 @@ public class PayController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(params = "uniformOrder")
+    @RequestMapping(params = "/wechat/uniformOrder")
     public Map<String, Object> uniformOrder(@RequestParam(value = "orderNo") String orderNo,
                                             @RequestParam(value = "openid") String openid, HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
-        try {
-            map = payService.uniformOrder(orderNo, openid, request);
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            map = payService.uniformOrder(orderNo, openid, request);
+//        } catch (JDOMException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return map;
     }
 
@@ -93,7 +82,7 @@ public class PayController {
      */
     @RequestMapping(value = "payNotify")
     public void payNotify(HttpServletRequest req, HttpServletResponse resp) {
-        payService.payNotify(req, resp);
+//        payService.payNotify(req, resp);
     }
 
     /**
@@ -104,15 +93,14 @@ public class PayController {
     @ResponseBody
     @RequestMapping(params = "orderQuery")
     public void orderQuery(@RequestParam(value = "orderNo") String orderNo) {
-        try {
-            @SuppressWarnings("unused")
-            Map<String, Object> map = payService.orderQuery(orderNo);
-            // TODO
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Map<String, Object> map = payService.orderQuery(orderNo);
+//            // TODO
+//        } catch (JDOMException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -126,7 +114,8 @@ public class PayController {
     @RequestMapping(params = "updateOrderPayStatus")
     public Map<String, Object> updateOrderPayStatus(@RequestParam(value = "orderNo") String orderNo,
                                                     @RequestParam(value = "payStatus") Integer payStatus) {
-        return orderService.updateOrderPayStatus(orderNo, payStatus);
+//        return orderService.updateOrderPayStatus(orderNo, payStatus);
+        return null;
     }
 
     /**
@@ -139,7 +128,8 @@ public class PayController {
     @RequestMapping(params = "orderDetail")
     public Map<String, Object> orderDetail(
             @RequestParam(value = "orderNo") String orderNo) {
-        return orderService.orderDetail(orderNo);
+//        return orderService.orderDetail(orderNo);
+        return null;
     }
 
 
