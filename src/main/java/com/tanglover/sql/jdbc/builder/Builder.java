@@ -40,15 +40,24 @@ public class Builder {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
+        boolean is_maven = true;
         boolean src = true;
+        String moduleName = "";
         String pkg = "com.tanglover.";
-        String[] var10000 = new String[]{"sys_user"};
-        String ip = "127.0.0.1";
-        String username = "root";
+
+        String[] tablenames = {
+                "sys_user",
+                "sys_role",
+                "sys_user_role"
+        };
+        String ip = "192.168.1.188";
+        int port = 3306;
+        String user = "root";
         String password = "system";
         String databaseName = "test";
+        autoCoder(is_maven, src, moduleName, pkg, tablenames, ip, port, user, password, databaseName);
     }
 
     public static void beanBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map) throws Exception {

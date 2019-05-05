@@ -8,13 +8,17 @@ import javax.swing.*;
  * @description:
  */
 public class Login {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Login");
+        frame.setContentPane(new Login().loginPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
     private JPanel loginPanel;
     private JLabel accountLabel;
     private JTextField account;
     private JPasswordField password;
     private JLabel passwordLabel;
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("test");
-    }
 }

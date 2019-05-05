@@ -89,7 +89,7 @@ public class SqlExecutor {
         String format = "jdbc:mysql://%s:%d/%s?autoReconnect=%s&characterEncoding=%s";
         String url = String.format(format, host, port, db, String.valueOf(reconnect), encoding);
         Class.forName(driver);
-        return DriverManager.getConnection(url);
+        return DriverManager.getConnection(url, username, password);
     }
 
     public static Connection getConnections(String driver, String url, String username, String password) throws Exception {

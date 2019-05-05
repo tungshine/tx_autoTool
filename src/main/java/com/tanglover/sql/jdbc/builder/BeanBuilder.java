@@ -19,9 +19,6 @@ public class BeanBuilder {
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public BeanBuilder() {
-    }
-
     public static void main(String[] args) {
         System.out.println(sdf.format(new Date()));
     }
