@@ -14,11 +14,11 @@ public class BarrageTest {
 
 
     public static void main(String[] args) throws InterruptedException {
-        DouYuClient client = new DouYuClient("openbarrage.douyutv.com", 8601, "485503");
+        DouYuClient client = new DouYuClient("openbarrage.douyutv.com", 8601, "5365174");
         client.registerMessageListener(new MessageListener<ChatMsg>() {
             @Override
             public void read(ChatMsg message) {
-//                System.out.println(message.toChatStr());
+                System.out.println(message.toChatStr());
             }
         });
         client.registerMessageListener(new MessageListener<String>() {
