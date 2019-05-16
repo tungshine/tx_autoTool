@@ -29,7 +29,7 @@ public class Builder {
             conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
             Map<String, String> map = DbUtil.returnRemarkInfo(ip, port, databaseName, username, password, true, "UTF-8", tablename);
             beanBuilder(moduleName, is_maven, conn, tablename, pkg, src, map);
-            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
+//            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
 //            DaoBuild(moduleName, is_maven, conn, tablename, pkg, src, map);
             conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
             map = DbUtil.returnRemarkInfoDOC(ip, port, databaseName, username, password, true, "UTF-8", tablename);

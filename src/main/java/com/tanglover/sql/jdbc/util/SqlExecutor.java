@@ -85,8 +85,9 @@ public class SqlExecutor {
     }
 
     public static Connection newMysqlConnection(String host, int port, String db, boolean reconnect, String encoding, String username, String password) throws ClassNotFoundException, SQLException {
-        String driver = "com.mysql.jdbc.Driver";
-        String format = "jdbc:mysql://%s:%d/%s?autoReconnect=%s&characterEncoding=%s";
+//        String driver = "com.mysql.jdbc.Driver";
+        String driver = "com.mysql.cj.jdbc.Driver";
+        String format = "jdbc:mysql://%s:%d/%s?autoReconnect=%s&characterEncoding=%s&serverTimezone=Asia/Shanghai";
         String url = String.format(format, host, port, db, String.valueOf(reconnect), encoding);
         Class.forName(driver);
         return DriverManager.getConnection(url, username, password);

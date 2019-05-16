@@ -20,7 +20,7 @@ public class PinYin {
     private PinYin() {
         try {
             if (p == null) {
-                InputStream is = this.getClass().getResourceAsStream("pinyin.db");
+                InputStream is = this.getClass().getResourceAsStream("classpath:pinyin.db");
                 InputStreamReader reader = new InputStreamReader(is, "UTF-8");
                 p = new Properties();
                 p.load(reader);

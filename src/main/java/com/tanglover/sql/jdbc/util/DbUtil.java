@@ -260,16 +260,16 @@ public class DbUtil {
     }
 
     public static Map<String, String> returnRemarkInfo(String ip, int port, String db, String user, String pwd, boolean reconnect, String encoding, String tablename) {
-        String driver = "com.mysql.jdbc.Driver";
-        String s = "jdbc:mysql://%s:%d/%s?autoReconnect=%s&characterEncoding=%s";
+        String driver = "com.mysql.cj.jdbc.Driver";
+        String s = "jdbc:mysql://%s:%d/%s?autoReconnect=%s&characterEncoding=%s&serverTimezone=Asia/Shanghai";
         String url = String.format(s, ip, port, db, String.valueOf(reconnect), encoding);
         System.out.println(url);
         return getTableInfo2(driver, url, user, pwd, tablename);
     }
 
     public static Map<String, String> returnRemarkInfoDOC(String ip, int port, String db, String user, String pwd, boolean reconnect, String encoding, String tablename) {
-        String driver = "com.mysql.jdbc.Driver";
-        String s = "jdbc:mysql://%s:%d/%s?autoReconnect=%s&characterEncoding=%s";
+        String driver = "com.mysql.cj.jdbc.Driver";
+        String s = "jdbc:mysql://%s:%d/%s?autoReconnect=%s&characterEncoding=%s&serverTimezone=Asia/Shanghai";
         String url = String.format(s, ip, port, db, String.valueOf(reconnect), encoding);
         System.out.println(url);
         return getTableInfoDOC(driver, url, user, pwd, tablename);
