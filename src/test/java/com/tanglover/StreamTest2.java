@@ -1,7 +1,5 @@
 package com.tanglover;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,8 +30,6 @@ public class StreamTest2 {
         };
     }
 
-    @Getter
-    @Setter
     public class Student {
         private String name;
         private Integer score;
@@ -42,13 +38,29 @@ public class StreamTest2 {
             this.name = name;
             this.score = score;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getScore() {
+            return score;
+        }
+
+        public void setScore(Integer score) {
+            this.score = score;
+        }
     }
 
     //1列出班上超过85分的学生姓名，并按照分数降序输出用户名字
     @Test
     public void test1() {
         List<String> studentList = stuList.stream()
-                .filter(x -> x.getScore() > 85)
+                .filter(student -> student.getScore() > 85)
                 .sorted(Comparator.comparing(Student::getScore).reversed())
                 .map(Student::getName)
                 .collect(Collectors.toList());

@@ -1,13 +1,9 @@
 package com.tanglover;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * @author TangXu
@@ -35,8 +31,6 @@ public class StreamTest {
     }
 }
 
-@Getter
-@Setter
 class Student {
 
     int no;
@@ -48,6 +42,38 @@ class Student {
         this.no = no;
         this.name = name;
         this.sex = sex;
+        this.height = height;
+    }
+
+    public int getNo() {
+        return no;
+    }
+
+    public void setNo(int no) {
+        this.no = no;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
         this.height = height;
     }
 }
