@@ -10,7 +10,7 @@ public class EntityDtoConverter {
     /**
      * @Author TangXu
      * @Date 2018/10/18 13:46
-     * @Description 视图对象转实体对象
+     * @Description 视图对象转换实体对象
      * @Param [source, target]
      * @Return java.lang.Object
      */
@@ -44,7 +44,7 @@ public class EntityDtoConverter {
     /**
      * @Author TangXu
      * @Date 2018/10/18 13:48
-     * @Description 实体对象转视图对象
+     * @Description 实体对象转换视图对象
      * @Param [source, target]
      * @Return java.lang.Object
      */

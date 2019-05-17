@@ -1,30 +1,27 @@
 package com.tanglover.encryption;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
-
-
-import org.apache.commons.lang3.StringUtils;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
- * 编码工具类 1.将byte[]转为各种进制的字符串 2.base 64 encode 3.base 64 decode 4.获取byte[]的md5值
- * 5.获取字符串md5值 6.结合base64实现md5加密 7.AES加密 8.AES加密为base 64 code 9.AES解密 10.将base
- * 64 code AES解密
+ * AES加密/加密
  *
- * @author TungShine 2016年9月26日
+ * @author TangXu
+ * @create 2019-05-17 15:28
+ * @description:
  */
 public class AES {
 
     public static void main(String[] args) throws Exception {
         String content = "www.10novo.com";
-        System.out.println("加密前：" + content);
+        System.out.println("加密前" + content);
 
         String key = "VVtPF5OoUI0jA6XW46witpsHQQWSvhkIyVZXNw9y1kC";
         System.out.println("加密密钥和解密密钥：" + key);
@@ -39,7 +36,7 @@ public class AES {
     /**
      * 将byte[]转为各种进制的字符串
      *
-     * @param bytes byte[]
+     * @param bytes
      * @param radix 可以转换进制的范围，从Character.MIN_RADIX到Character.MAX_RADIX，超出范围后变为10进制
      * @return 转换后的字符串
      */
@@ -48,41 +45,35 @@ public class AES {
     }
 
     /**
-     * base 64 encode
+     * base64 encode
      *
-     * @param bytes 待编码的byte[]
-     * @return 编码后的base 64 code
+     * @param bytes
+     * @return
      */
     public static String base64Encode(byte[] bytes) {
-        return new BASE64Encoder().encode(bytes);
+        byte[] encode = Base64.getEncoder().encode(bytes);
+        return new String(encode);
     }
 
     /**
-     * base 64 decode
-     *
      * @param base64Code 待解码的base 64 code
      * @return 解码后的byte[]
      * @throws Exception
      */
     public static byte[] base64Decode(String base64Code) throws Exception {
-
-        byte[] decodeBuffer = new BASE64Decoder().decodeBuffer(base64Code);
-        return null;
-        // return StringUtils.isEmpty(base64Code) ? null : new
-        // BASE64Decoder().decodeBuffer(base64Code);
+        return Base64.getDecoder().decode(base64Code);
     }
 
     /**
      * 获取byte[]的md5值
      *
-     * @param bytes byte[]
-     * @return md5
+     * @param bytes
+     * @return
      * @throws Exception
      */
     public static byte[] md5(byte[] bytes) throws Exception {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(bytes);
-
         return md.digest();
     }
 
@@ -168,5 +159,4 @@ public class AES {
     public static String aesDecrypt(String encryptStr, String decryptKey) throws Exception {
         return StringUtils.isEmpty(encryptStr) ? null : aesDecryptByBytes(base64Decode(encryptStr), decryptKey);
     }
-
 }

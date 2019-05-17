@@ -7,15 +7,13 @@
  */
 package com.tanglover.encryption;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
 /**
  * @author: TangXu
@@ -37,15 +35,12 @@ public class DES3 {
     public static String desEncrypt(String message, String key) {
         String result = ""; // DES加密字符串
         String newResult = "";// 去掉换行符后的加密字符串
-
         if (key.length() < 24) {
             for (int i = key.length(); i < 24; i++) {
                 key = key + "0";
             }
         }
-
         keyString = key;
-
         try {
             secretKey = new SecretKeySpec(keyString.getBytes(), "DESede");// 获得密钥
             /* 获得一个私鈅加密类Cipher，DESede是算法，ECB是加密模式，PKCS5Padding是填充方式 */
@@ -53,13 +48,12 @@ public class DES3 {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-
         try {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey); // 设置工作模式为加密模式，给出密钥
             byte[] resultBytes = cipher.doFinal(message.getBytes("UTF-8")); // 正式执行加密操作
-            BASE64Encoder enc = new BASE64Encoder();
-            result = enc.encode(resultBytes);// 进行BASE64编码
-            newResult = filter(result); // 去掉加密串中的换行符
+            byte[] encode = Base64.getEncoder().encode(resultBytes);
+            newResult = filter(new String(encode));
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -92,10 +86,9 @@ public class DES3 {
 
         String result = "";
         try {
-            BASE64Decoder dec = new BASE64Decoder();
-            byte[] messageBytes = dec.decodeBuffer(message); // 进行BASE64编码
             cipher.init(Cipher.DECRYPT_MODE, secretKey); // 设置工作模式为解密模式，给出密钥
-            byte[] resultBytes = cipher.doFinal(messageBytes);// 正式执行解密操作
+            byte[] decode = Base64.getDecoder().decode(message);
+            byte[] resultBytes = cipher.doFinal(decode);// 正式执行解密操作
             result = new String(resultBytes, "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,5 +113,13 @@ public class DES3 {
         }
         output = new String(sb);
         return output;
+    }
+
+    public static void main(String[] args) throws Exception {
+        String s = desEncrypt("123", "123456");
+        System.out.println("加密前：" + s);
+        String s1 = desDecrypt(s, "123456");
+        System.out.println(s1);
+
     }
 }
