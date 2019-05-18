@@ -48,11 +48,12 @@ public class Builder {
         String pkg = "com.tanglover.";
 
         String[] tablenames = {
-                "sys_user",
-                "sys_role",
-                "sys_user_role"
+                "sys_user"
+//                ,
+//                "sys_role",
+//                "sys_user_role"
         };
-        String ip = "192.168.1.188";
+        String ip = "127.0.0.1";
         int port = 3306;
         String user = "root";
         String password = "system";
@@ -60,11 +61,31 @@ public class Builder {
         autoCoder(is_maven, src, moduleName, pkg, tablenames, ip, port, user, password, databaseName);
     }
 
+    public static String file(boolean is_maven, String pkg, boolean src, String type, String tableName, String ext) {
+        tableName = StringExecutor.removeUnderline(tableName);
+        String path = StringExecutor.package2Path(pkg);
+        if (is_maven) {
+            if (src) {
+                path = "src/main/java/" + path;
+            }
+
+            path = path + type + "/" + StringExecutor.upperFirst(PinYin.getShortPinYin(tableName)) + "." + ext;
+        } else {
+            if (src) {
+                path = "src/" + path;
+            }
+
+            path = path + type + "/" + StringExecutor.upperFirst(PinYin.getShortPinYin(tableName)) + "." + ext;
+        }
+
+        return path;
+    }
+
     public static void beanBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map) throws Exception {
         String sql = String.format("SELECT * FROM `%s` LIMIT 1", tableName);
         ResultSet rs = SqlExecutor.executeQuery(conn, sql);
         BeanBuilder builder = new BeanBuilder();
-        String xml = builder.build(rs, pkg, src, map);
+        String xml = builder.build(rs, pkg + "bean", src, map);
         System.out.println(xml);
         String filename = file(is_maven, pkg, src, "bean", tableName, "java");
         if (moduleName != null && !"".equalsIgnoreCase(moduleName)) {
@@ -73,25 +94,6 @@ public class Builder {
 
         writeFile(filename, xml);
         conn.close();
-    }
-
-    public static String file(boolean is_maven, String pkg, boolean src, String type, String tablename, String ext) {
-        String path = StringExecutor.package2Path(pkg);
-        if (is_maven) {
-            if (src) {
-                path = "src/main/java/" + path;
-            }
-
-            path = path + type + "/" + StringExecutor.upperFirst(PinYin.getShortPinYin(tablename)) + "." + ext;
-        } else {
-            if (src) {
-                path = "src/" + path;
-            }
-
-            path = path + type + "/" + StringExecutor.upperFirst(PinYin.getShortPinYin(tablename)) + "." + ext;
-        }
-
-        return path;
     }
 
     public static void writeFile(String f, String s) throws Exception {

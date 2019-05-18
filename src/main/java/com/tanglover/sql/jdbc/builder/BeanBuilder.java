@@ -40,18 +40,24 @@ public class BeanBuilder {
         sb.append("\r\n");
         sb.append("\r\n");
         sb.append("/**");
+        sb.append("\r\n");
         sb.append(" * @author TangXu");
+        sb.append("\r\n");
         sb.append(" * @create " + sdf.format(new Date()));
-        sb.append(" * @description: " + tableName);
+        sb.append("\r\n");
+        sb.append(" * @description: " + StringExecutor.removeUnderline(tableName));
+        sb.append("\r\n");
         sb.append(" */");
+        sb.append("\r\n");
         sb.append("@SuppressWarnings({\"serial\"})");
         sb.append("\r\n");
         sb.append("public class ");
         sb.append(StringExecutor.removeUnderline(tableName));
-        sb.append(" implements Cloneable , Serializable {\r\n");
+        sb.append(" implements Cloneable, Serializable {\r\n");
         sb.append("\r\n");
         String columns = getFieldArrayString(rsmd, "id");
-        sb.append("    //public static String[] _arrays =" + columns + ";\r\n");
+//        sb.append("    //public static String[] _arrays =" + columns + ";\r\n");
+        sb.append("    //public static String[] _arrays =" + StringExecutor.removeUnderline(columns) + ";\r\n");
         sb.append("\r\n");
         int count = rsmd.getColumnCount();
 
@@ -64,13 +70,13 @@ public class BeanBuilder {
             sb.append("    public ");
             sb.append(javaType);
             sb.append(" ");
-            sb.append(columnName);
+            sb.append(StringExecutor.removeUnderline(columnName));
             if (javaType.contains("String")) {
-                sb.append("=\"\"");
+                sb.append(" = \"\"");
             }
 
             if (javaType.contains("Date")) {
-                sb.append("=new java.util.Date()");
+                sb.append(" = new java.util.Date()");
             }
 
             sb.append(";");
@@ -79,8 +85,7 @@ public class BeanBuilder {
         }
         sb.append("\r\n");
         sb.append("\r\n");
-//        String columnName;
-
+        sb.append("}");
         return sb.toString();
     }
 
