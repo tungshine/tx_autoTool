@@ -69,13 +69,13 @@ public class Builder {
                 path = "src/main/java/" + path;
             }
 
-            path = path + type + "/" + StringExecutor.upperFirst(PinYin.getShortPinYin(tableName)) + "." + ext;
+            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
         } else {
             if (src) {
                 path = "src/" + path;
             }
 
-            path = path + type + "/" + StringExecutor.upperFirst(PinYin.getShortPinYin(tableName)) + "." + ext;
+            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
         }
 
         return path;

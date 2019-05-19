@@ -1,5 +1,6 @@
 package com.tanglover.sql.jdbc.builder;
 
+import com.tanglover.pinyin.PinYin;
 import com.tanglover.sql.jdbc.util.StringExecutor;
 
 import java.sql.ResultSet;
@@ -24,10 +25,34 @@ public class BeanBuilder {
     }
 
     public String build(ResultSet rs, String pkg, boolean gs, Map<String, String> map) throws SQLException {
-        ResultSetMetaData rsmd = rs.getMetaData();
-        String tableName = rsmd.getTableName(1);
+        ResultSetMetaData rsMetaData = rs.getMetaData();
+        String entityName = StringExecutor.removeUnderline(rsMetaData.getTableName(1));
         Map<String, String> mExist = new Hashtable<>();
         StringBuffer sb = new StringBuffer();
+
+        // build entityClass
+        String buildEntityClass = buildEntityClass(rsMetaData, entityName, pkg);
+        sb.append(buildEntityClass);
+
+        // build properties
+        String buildProperties = buildProperties(rsMetaData, map);
+        sb.append(buildProperties);
+
+        // build propertyMethods
+        String propertyMethods = buildPropertyMethods(rsMetaData, mExist);
+        sb.append(propertyMethods);
+
+        // buildConstructor
+        String buildConstructor = buildConstructor(entityName, rsMetaData);
+        sb.append(buildConstructor);
+
+        sb.append("\r\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    public String buildEntityClass(ResultSetMetaData rsMetaData, String entityName, String pkg) throws SQLException {
+        StringBuilder sb = new StringBuilder();
         if (pkg != null && pkg.length() > 0) {
             sb.append("package " + pkg + ";");
             sb.append("\r\n");
@@ -36,8 +61,7 @@ public class BeanBuilder {
 
         sb.append("import java.io.*;");
         sb.append("\r\n");
-        sb.append("import java.util.*;");
-        sb.append("\r\n");
+//        sb.append("import java.util.*;");
         sb.append("\r\n");
         sb.append("/**");
         sb.append("\r\n");
@@ -45,32 +69,32 @@ public class BeanBuilder {
         sb.append("\r\n");
         sb.append(" * @create " + sdf.format(new Date()));
         sb.append("\r\n");
-        sb.append(" * @description: " + StringExecutor.removeUnderline(tableName));
+        sb.append(" * @description: " + entityName);
         sb.append("\r\n");
         sb.append(" */");
         sb.append("\r\n");
         sb.append("@SuppressWarnings({\"serial\"})");
         sb.append("\r\n");
-        sb.append("public class ");
-        sb.append(StringExecutor.removeUnderline(tableName));
-        sb.append(" implements Cloneable, Serializable {\r\n");
+        sb.append("public class " + entityName + " implements Cloneable, Serializable {\n");
         sb.append("\r\n");
-        String columns = getFieldArrayString(rsmd, "id");
-//        sb.append("    //public static String[] _arrays =" + columns + ";\r\n");
+        String columns = getFieldArrayString(rsMetaData, "id");
         sb.append("    //public static String[] _arrays =" + StringExecutor.removeUnderline(columns) + ";\r\n");
-        sb.append("\r\n");
-        int count = rsmd.getColumnCount();
+        return sb.toString();
+    }
 
-        int i;
+    public String buildProperties(ResultSetMetaData rsMetaData, Map<String, String> map) throws SQLException {
+        StringBuilder sb = new StringBuilder();
         String columnName;
+        String sqlColumnName;
         String javaType;
-        for (i = 1; i <= count; ++i) {
-            columnName = rsmd.getColumnName(i);
-            javaType = JavaType.getType(rsmd, i);
+        for (int i = 1; i <= rsMetaData.getColumnCount(); ++i) {
+            sqlColumnName = rsMetaData.getColumnName(i);
+            columnName = StringExecutor.removeUnderline(sqlColumnName);
+            javaType = JavaType.getType(rsMetaData, i);
             sb.append("    public ");
             sb.append(javaType);
             sb.append(" ");
-            sb.append(StringExecutor.removeUnderline(columnName));
+            sb.append(StringExecutor.lowerFirstChar(columnName));
             if (javaType.contains("String")) {
                 sb.append(" = \"\"");
             }
@@ -78,14 +102,107 @@ public class BeanBuilder {
             if (javaType.contains("Date")) {
                 sb.append(" = new java.util.Date()");
             }
-
             sb.append(";");
-            sb.append((String) map.get(columnName));
+            sb.append(map.get(sqlColumnName));
             sb.append("\r\n");
         }
+        return sb.toString();
+    }
+
+    public String buildPropertyMethods(ResultSetMetaData rsMetaData, Map<String, String> mExist) throws SQLException {
+        String columnName;
+        String sqlColumnName;
+        String javaType;
+        if (null != rsMetaData && 0 < rsMetaData.getColumnCount()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i <= rsMetaData.getColumnCount(); ++i) {
+                sqlColumnName = rsMetaData.getColumnName(i);
+                javaType = JavaType.getType(rsMetaData, i);
+                columnName = StringExecutor.removeUnderline(sqlColumnName);
+                if (!mExist.containsKey(sqlColumnName)) {
+                    mExist.put(columnName, columnName);
+                    sb.append("\r\n");
+                    sb.append("    ");
+                    sb.append("public " + javaType + " get" + columnName + "() {");
+                    sb.append("\r\n");
+                    sb.append("    ");
+                    sb.append("    ");
+                    sb.append("return " + StringExecutor.lowerFirstChar(columnName) + ";");
+                    sb.append("\r\n");
+                    sb.append("    }\r\n");
+                    sb.append("\r\n");
+                    sb.append("    ");
+                    sb.append("public void set" + columnName + "(" + javaType + " " + StringExecutor.lowerFirstChar(columnName) + ") {");
+                    sb.append("\r\n");
+                    if (javaType.contains("String")) {
+                        sb.append("    \tif (" + StringExecutor.lowerFirstChar(columnName) + " == null) {");
+                        sb.append("\r\n");
+                        sb.append("            " + StringExecutor.lowerFirstChar(columnName) + " = \"\";");
+                        sb.append("\r\n");
+                        sb.append("        }\r\n");
+                    }
+
+                    if (javaType.contains("Date")) {
+                        sb.append("    \tif (" + StringExecutor.lowerFirstChar(columnName) + " == null) {");
+                        sb.append("\r\n");
+                        sb.append("            " + StringExecutor.lowerFirstChar(columnName) + " = new java.util.Date();");
+                        sb.append("\r\n");
+                        sb.append("        }\r\n");
+                    }
+                    sb.append("        ");
+                    sb.append("this.");
+                    sb.append(StringExecutor.lowerFirstChar(columnName));
+                    sb.append(" = " + StringExecutor.lowerFirstChar(columnName) + ";");
+                    sb.append("\r\n");
+                    sb.append("    }\r\n");
+                }
+            }
+            return sb.toString();
+        }
+        return null;
+    }
+
+    public String buildConstructor(String entityName, ResultSetMetaData rsMetaData) throws SQLException {
+        StringBuilder sb = new StringBuilder();
         sb.append("\r\n");
+        sb.append("    ");
+        sb.append("public static " + entityName + " new" + entityName + "(");
+        String javaType;
+        String columnName;
+        String sqlColumnName;
+        int count = rsMetaData.getColumnCount();
+        for (int i = 1; i <= count; ++i) {
+            sqlColumnName = rsMetaData.getColumnName(i);
+            columnName = StringExecutor.removeUnderline(sqlColumnName);
+            String propertyName = StringExecutor.lowerFirstChar(columnName);
+            javaType = JavaType.getType(rsMetaData, i);
+            sb.append(javaType + " ");
+            sb.append(PinYin.getShortPinYin(propertyName));
+            if (i + 1 <= count) {
+                sb.append(", ");
+            }
+        }
+
+        sb.append(") {");
         sb.append("\r\n");
-        sb.append("}");
+        sb.append("        ");
+        sb.append(entityName);
+        sb.append(" ret = new " + entityName + "();\r\n");
+        sb.append("    ");
+
+        for (int i = 1; i <= count; ++i) {
+            sqlColumnName = rsMetaData.getColumnName(i);
+            columnName = StringExecutor.removeUnderline(sqlColumnName);
+            String propertyName = StringExecutor.lowerFirstChar(columnName);
+            javaType = rsMetaData.getColumnName(i);
+            sb.append("    ret.set" + columnName);
+            sb.append("(" + propertyName + ");");
+            sb.append("\r\n");
+            sb.append("    ");
+        }
+        sb.append("    return ret;");
+        sb.append("    \r\n");
+        sb.append("    }");
         return sb.toString();
     }
 
