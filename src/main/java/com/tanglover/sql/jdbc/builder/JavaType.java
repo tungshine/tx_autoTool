@@ -14,9 +14,9 @@ public class JavaType {
     public static String getType(ResultSetMetaData rsmd, String columnName) throws SQLException {
         int count = rsmd.getColumnCount();
         for (int i = 0; i < count; i++) {
-            String key = rsmd.getColumnName(i);
+            String key = rsmd.getColumnName(i + 1);
             if (key.equals(columnName)) {
-                return getType(rsmd, i);
+                return getType(rsmd, i + 1);
             }
         }
         return "";

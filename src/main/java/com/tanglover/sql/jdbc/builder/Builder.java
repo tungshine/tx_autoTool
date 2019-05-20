@@ -30,9 +30,9 @@ public class Builder {
             Map<String, String> map = DbUtil.returnRemarkInfo(ip, port, databaseName, username, password, true, "UTF-8", tablename);
             beanBuilder(moduleName, is_maven, conn, tablename, pkg, src, map);
             conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
-//            DaoBuild(moduleName, is_maven, conn, tablename, pkg, src, map);
-            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
-            map = DbUtil.returnRemarkInfoDOC(ip, port, databaseName, username, password, true, "UTF-8", tablename);
+            daoBuilder(moduleName, is_maven, conn, tablename, pkg, src, map);
+//            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
+//            map = DbUtil.returnRemarkInfoDOC(ip, port, databaseName, username, password, true, "UTF-8", tablename);
 //            DocBuild(moduleName, is_maven, conn, tablename, pkg, src, map);
         }
 
@@ -49,9 +49,9 @@ public class Builder {
 
         String[] tablenames = {
                 "sys_user"
-//                ,
-//                "sys_role",
-//                "sys_user_role"
+                ,
+                "sys_role",
+                "sys_user_role"
         };
         String ip = "127.0.0.1";
         int port = 3306;
@@ -59,26 +59,6 @@ public class Builder {
         String password = "system";
         String databaseName = "test";
         autoCoder(is_maven, src, moduleName, pkg, tablenames, ip, port, user, password, databaseName);
-    }
-
-    public static String file(boolean is_maven, String pkg, boolean src, String type, String tableName, String ext) {
-        tableName = StringExecutor.removeUnderline(tableName);
-        String path = StringExecutor.package2Path(pkg);
-        if (is_maven) {
-            if (src) {
-                path = "src/main/java/" + path;
-            }
-
-            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
-        } else {
-            if (src) {
-                path = "src/" + path;
-            }
-
-            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
-        }
-
-        return path;
     }
 
     public static void beanBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map) throws Exception {
@@ -91,9 +71,39 @@ public class Builder {
         if (moduleName != null && !"".equalsIgnoreCase(moduleName)) {
             filename = moduleName + File.separator + filename;
         }
-
         writeFile(filename, xml);
         conn.close();
+    }
+
+    public static void daoBuilder(String moduleName, boolean is_maven, Connection conn, String tablename, String pkg, boolean src, Map<String, String> map_comment) throws Exception {
+        String sql = String.format("SELECT * FROM `%s` LIMIT 1", new Object[]{tablename});
+        ResultSet rs = SqlExecutor.executeQuery(conn, sql);
+        NewDaoBuilder builder = new NewDaoBuilder();
+        String xml = builder.build(conn, rs, pkg + "dao", pkg + "bean", map_comment);
+        System.out.println(xml);
+        String filename = file(is_maven, pkg, src, "dao", tablename + "Dao", "java");
+        if ((moduleName != null) && (!"".equalsIgnoreCase(moduleName))) {
+            filename = moduleName + File.separator + filename;
+        }
+        writeFile(filename, xml);
+        conn.close();
+    }
+
+    public static String file(boolean is_maven, String pkg, boolean src, String type, String tableName, String ext) {
+        tableName = StringExecutor.removeUnderline(tableName);
+        String path = StringExecutor.package2Path(pkg);
+        if (is_maven) {
+            if (src) {
+                path = "src/main/java/" + path;
+            }
+            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
+        } else {
+            if (src) {
+                path = "src/" + path;
+            }
+            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
+        }
+        return path;
     }
 
     public static void writeFile(String f, String s) throws Exception {
@@ -102,7 +112,6 @@ public class Builder {
             file.mkdirs();
             file.delete();
         }
-
         FileOutputStream fos = new FileOutputStream(f);
         fos.write(s.getBytes());
         fos.close();
