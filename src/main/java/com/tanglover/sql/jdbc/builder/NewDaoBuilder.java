@@ -77,15 +77,17 @@ public class NewDaoBuilder {
         sb.append("\r\n");
         sb.append("@Repository(\"" + StringExecutor.lowerFirstChar(entityName) + "Dao\")");
         sb.append("\r\n");
-        sb.append("public class " + entityName + "Dao extends BaseDao");
-        sb.append("{\r\n");
+        sb.append("public class " + entityName + "Dao extends BaseDao {");
+        sb.append("\r\n");
         sb.append("\r\n");
 
         sb.append("    Logger log = LoggerFactory.getLogger(" + entityName + "Dao.class)").append(";");
+        sb.append("\r\n");
+        sb.append("\r\n");
         sb.append("    public static SimpleDateFormat sdfMm = new SimpleDateFormat(\"yyyy-MM-dd HH:mm\");");
         sb.append("\r\n");
-        sb.append("    public static SimpleDateFormat sdfDd = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
         sb.append("\r\n");
+        sb.append("    public static SimpleDateFormat sdfDd = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
         System.out.println("-----------------------");
 
         sb.append(generateDef(rsmd, sqlTableName));
@@ -134,25 +136,25 @@ public class NewDaoBuilder {
         sb.append("\r\n");
         sb.append("\r\n");
         sb.append("\r\n");
-        sb.append("    private  String TABLE = \"" + tableName + "\";\r\n");
+        sb.append("    private String TABLE = \"" + tableName + "\";\r\n");
         sb.append("\r\n");
-        sb.append("    private  String TABLENAME = \"" + tableName + "\";\r\n");
+        sb.append("    private String TABLENAME = \"" + tableName + "\";\r\n");
         sb.append("\r\n");
-        sb.append("    public  String getTABLE() {\r\n");
-        sb.append("        return  TABLE;\r\n");
+        sb.append("    public String getTABLE() {\r\n");
+        sb.append("        return TABLE;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
 
-        sb.append("    public  String getTABLENAME() {\r\n");
-        sb.append("        return  TABLENAME;\r\n");
+        sb.append("    public String getTABLENAME() {\r\n");
+        sb.append("        return TABLENAME;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
 
-        sb.append("    public  String TABLEMM() {\r\n");
+        sb.append("    public String TABLEMM() {\r\n");
         sb.append("        return ").append("TABLE + ").append("sdfMm.format(new java.util.Date());\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
-        sb.append("    public  String TABLEDD() {\r\n");
+        sb.append("    public String TABLEDD() {\r\n");
         sb.append("        return ").append("TABLE + ").append("sdfDd.format(new java.util.Date());\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
@@ -166,23 +168,23 @@ public class NewDaoBuilder {
         String fields2 = getFields(rsmd, key, false);
         String fieldArrays = getFieldArrayString(rsmd, key);
 
-        sb.append("    private  String[] carrays = " + fieldArrays + ";\r\n");
-        sb.append("    private  String coulmns =\" " + fields + "\";\r\n");
-        sb.append("    private  String coulmns2 =\" " + fields2 + "\";\r\n");
+        sb.append("    private String[] carrays = " + fieldArrays + ";\r\n");
+        sb.append("    private String coulmns = \"" + fields + "\";\r\n");
+        sb.append("    private String coulmns2 = \"" + fields2 + "\";\r\n");
         sb.append("\r\n");
 
-        sb.append("    public  String[] getCarrays() {\r\n");
-        sb.append("        return  carrays;\r\n");
+        sb.append("    public String[] getCarrays() {\r\n");
+        sb.append("        return carrays;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
 
-        sb.append("    public  String getCoulmns() {\r\n");
-        sb.append("        return  coulmns;\r\n");
+        sb.append("    public String getCoulmns() {\r\n");
+        sb.append("        return coulmns;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
 
-        sb.append("    public  String getCoulmns2() {\r\n");
-        sb.append("        return  coulmns2;\r\n");
+        sb.append("    public String getCoulmns2() {\r\n");
+        sb.append("        return coulmns2;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
 
@@ -1038,7 +1040,7 @@ public class NewDaoBuilder {
             fields.append(columnName);
             fields.append("\"");
             if (i < count) {
-                fields.append(",");
+                fields.append(", ");
             }
         }
         fields.append("}");
