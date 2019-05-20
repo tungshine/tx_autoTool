@@ -35,7 +35,7 @@ public class StringExecutor {
 
     public static String removeUnderline(String s) {
         if (!s.contains("_")) {
-            return s;
+            return upperFirstChar(s);
         } else {
             String[] split = s.split("_");
             StringBuffer sb = new StringBuffer();
