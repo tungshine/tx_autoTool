@@ -18,28 +18,6 @@ import java.util.Map;
  */
 public class Builder {
 
-    public static void autoCoder(boolean is_maven, boolean src, String moduleName, String pkg, String[] tablenames, String ip, int port, String username, String password, String databaseName) throws Exception {
-
-        Connection conn = null;
-        String[] var11 = tablenames;
-        int var12 = tablenames.length;
-
-        for (int var13 = 0; var13 < var12; ++var13) {
-            String tablename = var11[var13];
-            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
-            Map<String, String> map = DbUtil.returnRemarkInfo(ip, port, databaseName, username, password, true, "UTF-8", tablename);
-            beanBuilder(moduleName, is_maven, conn, tablename, pkg, src, map);
-            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
-            daoBuilder(moduleName, is_maven, conn, tablename, pkg, src, map);
-//            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
-//            map = DbUtil.returnRemarkInfoDOC(ip, port, databaseName, username, password, true, "UTF-8", tablename);
-//            DocBuild(moduleName, is_maven, conn, tablename, pkg, src, map);
-        }
-
-//        DaoFactoryBuild(moduleName, is_maven, tablenames, pkg, src);
-    }
-
-
     public static void main(String[] args) throws Exception {
 
         boolean is_maven = true;
@@ -47,7 +25,7 @@ public class Builder {
         String moduleName = "";
         String pkg = "com.tanglover.";
 
-        String[] tablenames = {
+        String[] tableNames = {
                 "sys_user"
                 ,
                 "sys_role",
@@ -58,7 +36,53 @@ public class Builder {
         String user = "root";
         String password = "system";
         String databaseName = "test";
-        autoCoder(is_maven, src, moduleName, pkg, tablenames, ip, port, user, password, databaseName);
+        autoCoder(is_maven, src, moduleName, pkg, tableNames, ip, port, user, password, databaseName);
+    }
+
+
+    public static void autoCoder(boolean is_maven, boolean src, String moduleName, String pkg, String[] sqlTableNames, String ip, int port, String username, String password, String databaseName) throws Exception {
+
+        Connection conn = null;
+        String[] var11 = sqlTableNames;
+        int var12 = sqlTableNames.length;
+
+        for (int var13 = 0; var13 < var12; ++var13) {
+            String sqlTableName = var11[var13];
+            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
+            Map<String, String> map = DbUtil.returnRemarkInfo(ip, port, databaseName, username, password, true, "UTF-8", sqlTableName);
+            beanBuilder(moduleName, is_maven, conn, sqlTableName, pkg, src, map);
+            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
+            daoBuilder(moduleName, is_maven, conn, sqlTableName, pkg, src, map);
+            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
+            map = DbUtil.returnRemarkInfoDOC(ip, port, databaseName, username, password, true, "UTF-8", sqlTableName);
+            docBuild(moduleName, is_maven, conn, sqlTableName, pkg, src, map);
+        }
+        daoFactoryBuild(moduleName, is_maven, sqlTableNames, pkg, src);
+    }
+
+    public static void docBuild(String moduleName, boolean is_maven, Connection conn, String sqlTableName, String pkg, boolean src, Map<String, String> map) throws Exception {
+        String sql = String.format("SELECT * FROM `%s` LIMIT 1", new Object[]{sqlTableName});
+        ResultSet rs = SqlExecutor.executeQuery(conn, sql);
+        DocBuilder builder = new DocBuilder();
+        String xml = builder.build(rs, map);
+        System.out.println(xml);
+        String filename = file(is_maven, pkg, src, "doc", sqlTableName, "TXT");
+        if ((moduleName != null) && (!"".equalsIgnoreCase(moduleName))) {
+            filename = moduleName + File.separator + filename;
+        }
+        writeFile(filename, xml);
+        conn.close();
+    }
+
+    public static void daoFactoryBuild(String moduleName, boolean is_maven, String[] sqlTableNames, String pkg, boolean src) throws Exception {
+        DaoFactoryBuilder builder = new DaoFactoryBuilder();
+        String xml = builder.build(sqlTableNames, pkg + "dao");
+        System.out.println(xml);
+        String filename = file(is_maven, pkg, src, "dao", "DaoFactory", "java");
+        if ((moduleName != null) && (!"".equalsIgnoreCase(moduleName))) {
+            filename = moduleName + File.separator + filename;
+        }
+        writeFile(filename, xml);
     }
 
     public static void beanBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map) throws Exception {
@@ -78,7 +102,7 @@ public class Builder {
     public static void daoBuilder(String moduleName, boolean is_maven, Connection conn, String tablename, String pkg, boolean src, Map<String, String> map_comment) throws Exception {
         String sql = String.format("SELECT * FROM `%s` LIMIT 1", new Object[]{tablename});
         ResultSet rs = SqlExecutor.executeQuery(conn, sql);
-        NewDaoBuilder builder = new NewDaoBuilder();
+        DaoBuilder builder = new DaoBuilder();
         String xml = builder.build(conn, rs, pkg + "dao", pkg + "bean", map_comment);
         System.out.println(xml);
         String filename = file(is_maven, pkg, src, "dao", tablename + "Dao", "java");
@@ -88,6 +112,7 @@ public class Builder {
         writeFile(filename, xml);
         conn.close();
     }
+
 
     public static String file(boolean is_maven, String pkg, boolean src, String type, String tableName, String ext) {
         tableName = StringExecutor.removeUnderline(tableName);
