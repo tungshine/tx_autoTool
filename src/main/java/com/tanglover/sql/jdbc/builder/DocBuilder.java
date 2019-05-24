@@ -23,7 +23,7 @@ public class DocBuilder {
             sb.append("|");
             sb.append(columnName);
             sb.append("|");
-            sb.append((String) map.get(columnName));
+            sb.append(map.get(columnName));
             sb.append("|");
             sb.append(javaType);
             sb.append("|");
