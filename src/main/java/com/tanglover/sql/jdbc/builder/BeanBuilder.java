@@ -77,8 +77,10 @@ public class BeanBuilder {
         sb.append("\r\n");
         sb.append("public class " + entityName + " implements Cloneable, Serializable {\n");
         sb.append("\r\n");
-        String columns = getFieldArrayString(rsMetaData, "id");
-        sb.append("    //public static String[] _arrays =" + StringExecutor.removeUnderline(columns) + ";\r\n");
+        String columns = getSqlColumnString(rsMetaData, "id");
+        String fields = getFieldArrayString(rsMetaData, "id");
+        sb.append("    public static String[] columns = " + columns + ";\r\n");
+//        sb.append("    public static String[] fields = " + fields + ";\r\n");
         return sb.toString();
     }
 
@@ -206,6 +208,14 @@ public class BeanBuilder {
         return sb.toString();
     }
 
+    /**
+     * 数据库字段去下划线转换为bean 属性
+     *
+     * @param rsMetaData
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public String getFieldArrayString(ResultSetMetaData rsMetaData, String id) throws SQLException {
         StringBuffer fields = new StringBuffer();
         int count = rsMetaData.getColumnCount();
@@ -213,10 +223,35 @@ public class BeanBuilder {
         for (int i = 1; i <= count; ++i) {
             String columnName = rsMetaData.getColumnName(i);
             fields.append("\"");
-            fields.append(StringExecutor.removeUnderline(columnName));
+            fields.append(StringExecutor.lowerFirstChar(StringExecutor.removeUnderline(columnName)));
             fields.append("\"");
             if (i < count) {
-                fields.append(",");
+                fields.append(", ");
+            }
+        }
+        fields.append("}");
+        return fields.toString();
+    }
+
+    /**
+     * 获取数据库字段集合
+     *
+     * @param rsMetaData
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+    public String getSqlColumnString(ResultSetMetaData rsMetaData, String id) throws SQLException {
+        StringBuffer fields = new StringBuffer();
+        int count = rsMetaData.getColumnCount();
+        fields.append("{");
+        for (int i = 1; i <= count; ++i) {
+            String sqlColumnName = rsMetaData.getColumnName(i);
+            fields.append("\"");
+            fields.append(sqlColumnName);
+            fields.append("\"");
+            if (i < count) {
+                fields.append(", ");
             }
         }
         fields.append("}");

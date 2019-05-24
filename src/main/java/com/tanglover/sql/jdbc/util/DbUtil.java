@@ -277,13 +277,13 @@ public class DbUtil {
 
     public static void main(String[] args) {
         String user = "root";
-        String pwd = "root";
+        String pwd = "system";
         String ip = "127.0.0.1";
         int port = 3306;
-        String db = "stopcar";
+        String db = "test";
         boolean reconnect = true;
         String encoding = "UTF-8";
-        String tablename = "user_info";
-        returnRemarkInfo(ip, port, db, user, pwd, reconnect, encoding, tablename);
+        String tableName = "user_info";
+        returnRemarkInfo(ip, port, db, user, pwd, reconnect, encoding, tableName);
     }
 }

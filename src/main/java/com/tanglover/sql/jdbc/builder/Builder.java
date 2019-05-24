@@ -60,6 +60,34 @@ public class Builder {
         daoFactoryBuild(moduleName, is_maven, sqlTableNames, pkg, src);
     }
 
+    public static void beanBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map) throws Exception {
+        String sql = String.format("SELECT * FROM `%s` LIMIT 1", tableName);
+        ResultSet rs = SqlExecutor.executeQuery(conn, sql);
+        BeanBuilder builder = new BeanBuilder();
+        String xml = builder.build(rs, pkg + "bean", src, map);
+        System.out.println(xml);
+        String filename = file(is_maven, pkg, src, "bean", tableName, "java");
+        if (moduleName != null && !"".equalsIgnoreCase(moduleName)) {
+            filename = moduleName + File.separator + filename;
+        }
+        writeFile(filename, xml);
+        conn.close();
+    }
+
+    public static void daoBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map_comment) throws Exception {
+        String sql = String.format("SELECT * FROM `%s` LIMIT 1", new Object[]{tableName});
+        ResultSet rs = SqlExecutor.executeQuery(conn, sql);
+        DaoBuilder builder = new DaoBuilder();
+        String xml = builder.build(conn, rs, pkg + "dao", pkg + "bean", map_comment);
+        System.out.println(xml);
+        String filename = file(is_maven, pkg, src, "dao", tableName + "Dao", "java");
+        if ((moduleName != null) && (!"".equalsIgnoreCase(moduleName))) {
+            filename = moduleName + File.separator + filename;
+        }
+        writeFile(filename, xml);
+        conn.close();
+    }
+
     public static void docBuild(String moduleName, boolean is_maven, Connection conn, String sqlTableName, String pkg, boolean src, Map<String, String> map) throws Exception {
         String sql = String.format("SELECT * FROM `%s` LIMIT 1", new Object[]{sqlTableName});
         ResultSet rs = SqlExecutor.executeQuery(conn, sql);
@@ -85,48 +113,19 @@ public class Builder {
         writeFile(filename, xml);
     }
 
-    public static void beanBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map) throws Exception {
-        String sql = String.format("SELECT * FROM `%s` LIMIT 1", tableName);
-        ResultSet rs = SqlExecutor.executeQuery(conn, sql);
-        BeanBuilder builder = new BeanBuilder();
-        String xml = builder.build(rs, pkg + "bean", src, map);
-        System.out.println(xml);
-        String filename = file(is_maven, pkg, src, "bean", tableName, "java");
-        if (moduleName != null && !"".equalsIgnoreCase(moduleName)) {
-            filename = moduleName + File.separator + filename;
-        }
-        writeFile(filename, xml);
-        conn.close();
-    }
-
-    public static void daoBuilder(String moduleName, boolean is_maven, Connection conn, String tablename, String pkg, boolean src, Map<String, String> map_comment) throws Exception {
-        String sql = String.format("SELECT * FROM `%s` LIMIT 1", new Object[]{tablename});
-        ResultSet rs = SqlExecutor.executeQuery(conn, sql);
-        DaoBuilder builder = new DaoBuilder();
-        String xml = builder.build(conn, rs, pkg + "dao", pkg + "bean", map_comment);
-        System.out.println(xml);
-        String filename = file(is_maven, pkg, src, "dao", tablename + "Dao", "java");
-        if ((moduleName != null) && (!"".equalsIgnoreCase(moduleName))) {
-            filename = moduleName + File.separator + filename;
-        }
-        writeFile(filename, xml);
-        conn.close();
-    }
-
-
-    public static String file(boolean is_maven, String pkg, boolean src, String type, String tableName, String ext) {
-        tableName = StringExecutor.removeUnderline(tableName);
+    public static String file(boolean is_maven, String pkg, boolean src, String type, String sqlTableName, String ext) {
+        sqlTableName = StringExecutor.removeUnderline(sqlTableName);
         String path = StringExecutor.package2Path(pkg);
         if (is_maven) {
             if (src) {
                 path = "src/main/java/" + path;
             }
-            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
+            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(sqlTableName)) + "." + ext;
         } else {
             if (src) {
                 path = "src/" + path;
             }
-            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(tableName)) + "." + ext;
+            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(sqlTableName)) + "." + ext;
         }
         return path;
     }

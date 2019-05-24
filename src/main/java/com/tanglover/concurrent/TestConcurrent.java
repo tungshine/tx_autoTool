@@ -26,7 +26,7 @@ public class TestConcurrent {
     private static ExecutorService pool = new ThreadPoolExecutor(20, 100, 60L, TimeUnit.SECONDS,
             new LinkedBlockingQueue(10000));
 
-//    @Test
+    @org.junit.Test
     public void test() {
         pool.execute(InsertThread::insert);
     }
