@@ -82,11 +82,11 @@ public class EasyTemplate {
 
     public static void main(String[] args) throws Exception {
         String s = "C:/Java/WTK2.5.2_01/docs/api/midp/index.html";
-        String str = make(new File(s), newMap(), "GBK");
+        String str = make(new File(s), newMap(), "UTF8");
         System.out.println(str);
-        String str2 = make(new File(s), newMap(), "GBK");
+        String str2 = make(new File(s), newMap(), "UTF8");
         System.out.println(str2);
-        String str3 = make(new File(s), newMap(), "GBK");
+        String str3 = make(new File(s), newMap(), "UTF8");
         System.out.println(str3);
     }
 
