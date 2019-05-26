@@ -27,9 +27,9 @@ public class Builder {
 
         String[] tableNames = {
                 "sys_user"
-                ,
-                "sys_role",
-                "sys_user_role"
+//                ,
+//                "sys_role",
+//                "sys_user_role"
         };
         String ip = "127.0.0.1";
         int port = 3306;

@@ -1,5 +1,6 @@
 package com.tanglover.dao;
 
+import com.tanglover.bean.SysUser;
 import org.assertj.core.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,7 +221,7 @@ public class BaseDao {
 //        String[] columns = SysUser.columns;
 //        List<String> strings = Arrays.asList(columns);
 //        strings.forEach(System.out::println);
-//        System.out.println(getSql(SysUser.class, "sys_user"));
+        System.out.println(getSql(SysUser.class, "sys_user"));
     }
 
 }

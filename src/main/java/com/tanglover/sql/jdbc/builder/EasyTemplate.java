@@ -54,7 +54,7 @@ public class EasyTemplate {
         Iterator it = params.keySet().iterator();
         while (it.hasNext()) {
             String key = (String) it.next();
-            String v = (String) params.get(key);
+            String v = params.get(key);
             String k = String.format("${%s}", new Object[]{key});
             while (s.contains(k))
                 s = s.replace(k, v);
