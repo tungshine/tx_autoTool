@@ -1,4 +1,4 @@
-package com.tanglover.concurrent;
+package com.tanglover.study.concurrent;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 

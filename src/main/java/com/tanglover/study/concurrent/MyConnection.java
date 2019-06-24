@@ -1,4 +1,4 @@
-package com.tanglover.concurrent;
+package com.tanglover.study.concurrent;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
