@@ -61,7 +61,6 @@ public class BeanBuilder {
 
         sb.append("import java.io.*;");
         sb.append("\r\n");
-//        sb.append("import java.util.*;");
         sb.append("\r\n");
         sb.append("/**");
         sb.append("\r\n");
@@ -73,14 +72,10 @@ public class BeanBuilder {
         sb.append("\r\n");
         sb.append(" */");
         sb.append("\r\n");
-        sb.append("@SuppressWarnings({\"serial\"})");
-        sb.append("\r\n");
         sb.append("public class " + entityName + " implements Cloneable, Serializable {\n");
         sb.append("\r\n");
         String columns = getSqlColumnString(rsMetaData, "id");
-        String fields = getFieldArrayString(rsMetaData, "id");
         sb.append("    public static String[] columns = " + columns + ";\r\n");
-//        sb.append("    public static String[] fields = " + fields + ";\r\n");
         return sb.toString();
     }
 
@@ -91,12 +86,12 @@ public class BeanBuilder {
         String javaType;
         for (int i = 1; i <= rsMetaData.getColumnCount(); ++i) {
             sqlColumnName = rsMetaData.getColumnName(i);
-            columnName = StringExecutor.removeUnderline(sqlColumnName);
+            columnName = StringExecutor.underline2Hump(sqlColumnName);
             javaType = JavaType.getType(rsMetaData, i);
             sb.append("    public ");
             sb.append(javaType);
             sb.append(" ");
-            sb.append(StringExecutor.lowerFirstChar(columnName));
+            sb.append(columnName);
             if (javaType.contains("String")) {
                 sb.append(" = \"\"");
             }
@@ -164,6 +159,15 @@ public class BeanBuilder {
         return null;
     }
 
+    /**
+     * 生成构造方法
+     *
+     * @param entityName
+     * @param rsMetaData
+     * @description
+     * @author TangXu
+     * @date 2020/6/12 15:35
+     */
     public String buildConstructor(String entityName, ResultSetMetaData rsMetaData) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("\r\n");
@@ -178,8 +182,7 @@ public class BeanBuilder {
             columnName = StringExecutor.removeUnderline(sqlColumnName);
             String propertyName = StringExecutor.lowerFirstChar(columnName);
             javaType = JavaType.getType(rsMetaData, i);
-            sb.append(javaType + " ");
-            sb.append(PinYin.getShortPinYin(propertyName));
+            sb.append(javaType + " ").append(propertyName);
             if (i + 1 <= count) {
                 sb.append(", ");
             }
@@ -194,10 +197,8 @@ public class BeanBuilder {
 
         for (int i = 1; i <= count; ++i) {
             sqlColumnName = rsMetaData.getColumnName(i);
-            columnName = StringExecutor.removeUnderline(sqlColumnName);
-            String propertyName = StringExecutor.lowerFirstChar(columnName);
-            javaType = rsMetaData.getColumnName(i);
-            sb.append("    ret.set" + columnName);
+            String propertyName = StringExecutor.underline2Hump(sqlColumnName);
+            sb.append("    ret.set" + StringExecutor.upperFirstChar(propertyName));
             sb.append("(" + propertyName + ");");
             sb.append("\r\n");
             sb.append("    ");

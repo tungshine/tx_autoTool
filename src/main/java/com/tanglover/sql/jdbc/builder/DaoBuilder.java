@@ -71,16 +71,12 @@ public class DaoBuilder {
         sb.append("\r\n");
         sb.append("import org.springframework.stereotype.Repository;");
         sb.append("\r\n");
-
-        sb.append("//" + entityName + "\r\n");
-
         sb.append("\r\n");
         sb.append("@Repository(\"" + StringExecutor.lowerFirstChar(entityName) + "Dao\")");
         sb.append("\r\n");
         sb.append("public class " + entityName + "Dao extends BaseDao {");
         sb.append("\r\n");
         sb.append("\r\n");
-
         sb.append("    Logger log = LoggerFactory.getLogger(" + entityName + "Dao.class)").append(";");
         sb.append("\r\n");
         sb.append("\r\n");
@@ -89,50 +85,36 @@ public class DaoBuilder {
         sb.append("\r\n");
         sb.append("    public static SimpleDateFormat sdfDd = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
         System.out.println("-----------------------");
-
         sb.append(generateDef(rsmd, sqlTableName));
-
         sb.append(generateInsert(rsmd, sqlTableName));
-
         sb.append(generateBatchInsert(rsmd, sqlTableName));
 
         if (primaryKey != null) {
             sb.append(generateSelectAll(rsmd, sqlTableName));
-
             sb.append(generateSelect(rsmd, sqlTableName));
         }
 
         sb.append(generateCount(rsmd, sqlTableName));
-
         sb.append(generateSelectByPage(rsmd, sqlTableName));
 
         if (primaryKey != null) {
             sb.append(generateUpdate(rsmd, sqlTableName));
-
             sb.append(generateBatchUpdate(rsmd, sqlTableName));
-
             sb.append(generateDelete(rsmd, sqlTableName));
-
             sb.append(generateBatchDelete(rsmd, sqlTableName));
         }
 
         sb.append(generateCreateTable(conn, rs, rsmd, sqlTableName, map_comment));
-
         sb.append(generateTruncate(rsmd, sqlTableName));
-
         sb.append(generateRepair(rsmd, sqlTableName));
-
         sb.append(generateOptimize(rsmd, sqlTableName));
-
         sb.append(generateExecute(rsmd, sqlTableName));
-
         sb.append("}\r\n");
         return sb.toString();
     }
 
     static String generateDef(ResultSetMetaData rsmd, String tableName) throws SQLException {
         StringBuffer sb = new StringBuffer();
-
         sb.append("\r\n");
         sb.append("\r\n");
         sb.append("\r\n");
@@ -144,12 +126,10 @@ public class DaoBuilder {
         sb.append("        return TABLE;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
-
         sb.append("    public String getTABLENAME() {\r\n");
         sb.append("        return TABLENAME;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
-
         sb.append("    public String TABLEMM() {\r\n");
         sb.append("        return ").append("TABLE + ").append("sdfMm.format(new java.util.Date());\r\n");
         sb.append("    }\r\n");
@@ -172,12 +152,10 @@ public class DaoBuilder {
         sb.append("    private String coulmns = \"" + fields + "\";\r\n");
         sb.append("    private String coulmns2 = \"" + fields2 + "\";\r\n");
         sb.append("\r\n");
-
         sb.append("    public String[] getCarrays() {\r\n");
         sb.append("        return carrays;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
-
         sb.append("    public String getCoulmns() {\r\n");
         sb.append("        return coulmns;\r\n");
         sb.append("    }\r\n");
@@ -187,7 +165,6 @@ public class DaoBuilder {
         sb.append("        return coulmns2;\r\n");
         sb.append("    }\r\n");
         sb.append("\r\n");
-
         return sb.toString();
     }
 
@@ -204,7 +181,6 @@ public class DaoBuilder {
             key = primaryKey;
         }
         String entityName = StringExecutor.removeUnderline(sqlTableName);
-
         String fields = getFields(rsmd, key, false);
         String values = getValues(rsmd, key, false);
         sb.append("    //添加数据\r\n");
@@ -224,15 +200,14 @@ public class DaoBuilder {
         sb.append("        } catch (Exception e) {\r\n");
         sb.append("            //createTable(TABLENAME2);\r\n");
         sb.append("            log.error(\"insert\", e);").append("\r\n");
-
         sb.append("            throw new SQLException(\"insert is error\", e);\r\n");
         sb.append("        }\r\n");
-
         sb.append("    }\r\n");
         sb.append("\r\n");
 
         fields = getFields(rsmd, key, true);
         values = getValues(rsmd, key, true);
+
         sb.append("    //添加数据\r\n");
         sb.append("    public long insertPrimaryKey(" + entityName + " bean) throws SQLException {\r\n");
         sb.append("        return insertPrimaryKey(bean, TABLENAME);\r\n");
@@ -244,15 +219,12 @@ public class DaoBuilder {
         sb.append("        try {\r\n");
         sb.append("            sql = \"INSERT INTO \" + TABLENAME2 + \" (" + fields + ") VALUES (" + values + ")\";\r\n");
         sb.append("            SqlParameterSource ps = new BeanPropertySqlParameterSource(bean);\r\n");
-
         sb.append("            return _np.update(sql, ps);\r\n");
         sb.append("        } catch(Exception e) {\r\n");
         sb.append("            //createTable(TABLENAME2);\r\n");
         sb.append("            log.error(\"insertPrimaryKey\", e);").append("\r\n");
-
         sb.append("            throw new SQLException(\"insert2 is error\", e);\r\n");
         sb.append("        }\r\n");
-
         sb.append("    }\r\n");
         sb.append("\r\n");
         return sb.toString();

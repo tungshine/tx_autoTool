@@ -35,14 +35,14 @@ public class Builder {
         int port = 3306;
         String user = "root";
         String password = "system";
-        String databaseName = "test";
+        String databaseName = "erp";
         autoCoder(is_maven, src, moduleName, pkg, tableNames, ip, port, user, password, databaseName);
     }
 
 
     public static void autoCoder(boolean is_maven, boolean src, String moduleName, String pkg, String[] sqlTableNames, String ip, int port, String username, String password, String databaseName) throws Exception {
 
-        Connection conn = null;
+        Connection conn;
         String[] var11 = sqlTableNames;
         int var12 = sqlTableNames.length;
 
@@ -51,13 +51,13 @@ public class Builder {
             conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
             Map<String, String> map = DbUtil.returnRemarkInfo(ip, port, databaseName, username, password, true, "UTF-8", sqlTableName);
             beanBuilder(moduleName, is_maven, conn, sqlTableName, pkg, src, map);
-            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
+//            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
             daoBuilder(moduleName, is_maven, conn, sqlTableName, pkg, src, map);
-            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
-            map = DbUtil.returnRemarkInfoDOC(ip, port, databaseName, username, password, true, "UTF-8", sqlTableName);
-            docBuild(moduleName, is_maven, conn, sqlTableName, pkg, src, map);
+//            conn = SqlExecutor.newMysqlConnection(ip, port, databaseName, username, password);
+//            map = DbUtil.returnRemarkInfoDOC(ip, port, databaseName, username, password, true, "UTF-8", sqlTableName);
+//            docBuild(moduleName, is_maven, conn, sqlTableName, pkg, src, map);
         }
-        daoFactoryBuild(moduleName, is_maven, sqlTableNames, pkg, src);
+//        daoFactoryBuild(moduleName, is_maven, sqlTableNames, pkg, src);
     }
 
     public static void beanBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map) throws Exception {
@@ -71,7 +71,7 @@ public class Builder {
             filename = moduleName + File.separator + filename;
         }
         writeFile(filename, xml);
-        conn.close();
+//        conn.close();
     }
 
     public static void daoBuilder(String moduleName, boolean is_maven, Connection conn, String tableName, String pkg, boolean src, Map<String, String> map_comment) throws Exception {
@@ -85,7 +85,7 @@ public class Builder {
             filename = moduleName + File.separator + filename;
         }
         writeFile(filename, xml);
-        conn.close();
+//        conn.close();
     }
 
     public static void docBuild(String moduleName, boolean is_maven, Connection conn, String sqlTableName, String pkg, boolean src, Map<String, String> map) throws Exception {
@@ -120,7 +120,8 @@ public class Builder {
             if (src) {
                 path = "src/main/java/" + path;
             }
-            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(sqlTableName)) + "." + ext;
+//            path = path + type + "/" + StringExecutor.upperFirstChar(PinYin.getShortPinYin(sqlTableName)) + "." + ext;
+            path = path + type + "/" + StringExecutor.upperFirstChar(sqlTableName) + "." + ext;
         } else {
             if (src) {
                 path = "src/" + path;

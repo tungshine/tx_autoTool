@@ -1,5 +1,8 @@
 package com.tanglover.sql.jdbc.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +16,9 @@ import java.util.regex.Pattern;
  * @description:
  */
 public class DbUtil {
+    static Logger logger = LoggerFactory.getLogger(DbUtil.class);
+
+
     public static Map<String, String> getTableInfo(String driver, String url, String user, String pwd, String table) {
         Map<String, String> map = new HashMap();
         Connection conn = null;
@@ -21,7 +27,7 @@ public class DbUtil {
         try {
             conn = getConnections(driver, url, user, pwd);
             dbmd = conn.getMetaData();
-            ResultSet resultSet = dbmd.getTables((String) null, "%", table, new String[]{"TABLE"});
+            ResultSet resultSet = dbmd.getTables(null, "%", table, new String[]{"TABLE"});
 
             while (true) {
                 String tableName;
@@ -34,7 +40,7 @@ public class DbUtil {
                     System.out.println(tableName);
                 } while (!tableName.equals(table));
 
-                ResultSet rs = conn.getMetaData().getColumns((String) null, getSchema(conn), tableName.toUpperCase(), "%");
+                ResultSet rs = conn.getMetaData().getColumns(null, getSchema(conn), tableName.toUpperCase(), "%");
 
                 while (rs.next()) {
                     Pattern p = Pattern.compile("\\s*|\t|\r|\n");
@@ -66,7 +72,6 @@ public class DbUtil {
         Map<String, String> map = new HashMap();
         Connection conn = null;
         Statement stmt = null;
-
         try {
             conn = getConnections(driver, url, user, pwd);
             stmt = conn.createStatement();
@@ -87,18 +92,7 @@ public class DbUtil {
         } catch (Exception var25) {
             var25.printStackTrace();
         } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException var23) {
-                var23.printStackTrace();
-            }
-
+            close(conn, stmt);
         }
 
         return map;
@@ -128,18 +122,7 @@ public class DbUtil {
         } catch (Exception var25) {
             var25.printStackTrace();
         } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException var23) {
-                var23.printStackTrace();
-            }
-
+            close(conn, stmt);
         }
 
         return map;
@@ -273,6 +256,19 @@ public class DbUtil {
         String url = String.format(s, ip, port, db, String.valueOf(reconnect), encoding);
         System.out.println(url);
         return getTableInfoDOC(driver, url, user, pwd, tablename);
+    }
+
+    public static void close(Connection connection, Statement statement) {
+        try {
+            if (null != connection) {
+                connection.close();
+            }
+            if (null != statement) {
+                statement.close();
+            }
+        } catch (Exception e) {
+            logger.error("close error: {}", e.getMessage());
+        }
     }
 
     public static void main(String[] args) {
